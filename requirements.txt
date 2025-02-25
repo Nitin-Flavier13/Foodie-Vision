@@ -1,0 +1,10 @@
+numpy
+pandas
+seaborn
+matplotlib
+scikit-learn
+mlxtend
+pillow
+torch
+torchvision
+torchaudio
