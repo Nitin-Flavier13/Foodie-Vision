@@ -7,4 +7,5 @@ mlxtend
 pillow
 torch
 torchvision
-torchaudio
+torchinfo
+tqdm
