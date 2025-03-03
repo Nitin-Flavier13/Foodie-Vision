@@ -45,11 +45,9 @@ def upload_performance(model_name: str,
         "test_accuracy": model_results["test_acc"][-1],
         "train_accuracy": model_results["train_acc"][-1],
     }
-    print(model_data)
     
     # Convert to a DataFrame
     df = pd.DataFrame([model_data])
-    print(df)
 
     # Append to CSV if it exists, otherwise create a new one
     target_path = target_dir + "performance_comparision.csv"
