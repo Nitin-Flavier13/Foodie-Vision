@@ -3,6 +3,7 @@ Contains function for training and testing a PyTorch Model.
 '''
 import torch
 from torch import nn
+import torch.utils.tensorboard
 from tqdm.auto import tqdm
 from typing import Dict, List, Tuple
 
@@ -79,7 +80,8 @@ def initiate_training(model: nn.Module,
                       loss_fn: nn.Module,
                     #   scheduler: torch.optim.lr_scheduler._LRScheduler | None=None,
                       epochs: int=5,
-                      device=device) -> Dict[str,list[int]]:
+                      device=device,
+                      writer=torch.utils.tensorboard.SummaryWriter) -> Dict[str,list[int]]:
     ''' 
     Trains and Tests a PyTorch Model
     Trains and Tests model for each epoch.
@@ -134,11 +136,21 @@ def initiate_training(model: nn.Module,
         epoch_test_acc = acc_test / len(test_dataloader)
         results['test_loss'].append(epoch_test_loss)
         results['test_acc'].append(epoch_test_acc)
+
+        # Log metrics to TensorBoard
+        writer.add_scalars("Loss", {"train_loss": epoch_train_loss, "test_loss": epoch_test_loss}, epoch)
+        writer.add_scalars("Accuracy", {"train_acc": epoch_train_acc, "test_acc": epoch_test_acc}, epoch)
+        
+        # Log model graph once
+        if epoch == 0:
+            dummy_input = torch.randn(1, 3, 224, 224).to(device)
+            writer.add_graph(model, dummy_input)
         
         # scheduler.step(epoch_test_loss)
         # Print final metrics for the epoch
         print(f"Epoch {epoch}: Train Loss: {epoch_train_loss:.4f} | Test Loss: {epoch_test_loss:.4f} | Train Accuracy: {epoch_train_acc:.4f} | Test Accuracy: {epoch_test_acc:.4f}")
 
+    writer.close()
     return results
 
     

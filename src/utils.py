@@ -1,10 +1,27 @@
+'''
+- 
+-
+- create_writer():
+    Creates an instance for SummaryWriter():
+
+    - Experiment date
+    - Experiment name
+    - Model name 
+
+    logging directory: 'runs/YYYY-MM-DD/experiment_name/model_name/extra'
+'''
+
+
 import os
 import torch
 import pandas as pd
+
 from pathlib import Path
 from typing import List,Dict
 from datetime import datetime
 from datetime import timedelta
+from torch.utils.tensorboard import SummaryWriter
+
 
 def save_model(model: torch.nn.Module,
                target_dir: str,
@@ -31,6 +48,8 @@ def save_model(model: torch.nn.Module,
 
 def upload_performance(model_name: str,
                        target_dir: str,
+                       batch_size: int,
+                       learning_rate: float,
                        training_time: float,
                        model_results: Dict[str,List[int]]):
     # Get the current timestamp
@@ -41,6 +60,8 @@ def upload_performance(model_name: str,
         "timestamp": timestamp,
         "model_name": model_name,
         "training_time": formatted_training_time,
+        "batch_size": batch_size,
+        "learning_rate": learning_rate,
         "epochs": len(model_results["test_acc"]),
         "test_accuracy": model_results["test_acc"][-1],
         "train_accuracy": model_results["train_acc"][-1],
@@ -59,5 +80,23 @@ def upload_performance(model_name: str,
         df.to_csv(target_path, mode='w', header=True, index=False)
 
     print("Model results saved successfully! 🚀")
+
+def create_writer(experiment_name: str,
+                  model_name: str,
+                  extra: str=None):
+    """ 
+    Creates a torch.utils.tensorboard.writer.SummaryWriter() instances tracking to a specific experiment
+    """
+
+    timestamp = datetime.now().strftime("%Y-%m-%d")
+
+    if extra:
+        log_dir = os.path.join("../runs",timestamp,experiment_name,model_name,extra)
+    else:
+        log_dir = os.path.join("../runs",timestamp,experiment_name,model_name)
+    
+    return SummaryWriter(log_dir=log_dir)
+    
+
 
 

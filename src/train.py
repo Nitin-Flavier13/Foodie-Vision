@@ -9,7 +9,7 @@ from models.TinyVGG import TinyVGGV1
 from data_setup import create_dataloaders
 from timeit import default_timer as timer
 
-NUM_EPOCHS=1
+NUM_EPOCHS=150
 BATCH_SIZE=25
 NUM_WORKERS=1
 HIDDEN_UNITS = 10
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                     target_dir=model_target_dir,
                     model_name='TinyVGGV1.pth')
 
-    utils.upload_performance(model_name='DUMMY_TEST_TinyVGGV1',
+    utils.upload_performance(model_name='TinyVGGV1',
                         target_dir='../model_performance/',
                         training_time= model_training_time,
                         model_results=model_results)
